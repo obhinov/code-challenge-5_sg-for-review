@@ -1,0 +1,77 @@
+service: code-challenge-5-sg
+frameworkVersion: '3'
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-2
+  stage: ${opt:stage, "dev"} # sls deploy --stage test (or staging, dev, prod)
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${self:custom.DynamoDBTableName}
+
+functions:
+  create:
+    handler: create.handler
+    events:
+      - http:
+          path: users
+          method: POST
+          cors: true
+    environment:
+      TABLE_NAME: ${self:custom.DynamoDBTableName}
+  read:
+    handler: read.handler
+    events:
+      - http:
+          path: users
+          method: GET
+          cors: true
+      - http:
+          path: users/{id}
+          method: GET
+          cors: true
+    environment:
+      TABLE_NAME: ${self:custom.DynamoDBTableName}
+  update:
+    handler: update.handler
+    events:
+      - http:
+          path: users
+          method: PUT
+          cors: true
+    environment:
+      TABLE_NAME: ${self:custom.DynamoDBTableName}
+  delete:
+    handler: delete.handler
+    events:
+      - http:
+          path: users
+          method: DELETE
+          cors: true
+    environment:
+      TABLE_NAME: ${self:custom.DynamoDBTableName}
+  
+
+resources: # CloudFormation template syntax from here on.
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.DynamoDBTableName}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+
+custom:
+  DynamoDBTableName: ${self:service}-users-table-${self:provider.stage}

@@ -1,0 +1,22 @@
+{
+  "name": "code-challenge-5_sg",
+  "version": "1.0.0",
+  "description": "Code challenge 5 for serverless guru",
+  "main": "create.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/obhinov/code-challenge-5_sg.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/obhinov/code-challenge-5_sg/issues"
+  },
+  "homepage": "https://github.com/obhinov/code-challenge-5_sg#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1243.0"
+  }
+}
